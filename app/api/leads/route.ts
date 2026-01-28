@@ -1,6 +1,5 @@
 import { NextResponse } from 'next/server';
 import { supabase } from '@/lib/supabase';
-import { Lead } from '@/types/lead';
 
 export async function POST(request: Request) {
     try {
@@ -54,5 +53,22 @@ export async function POST(request: Request) {
     } catch (error) {
         console.error("Webhook Error:", error);
         return NextResponse.json({ error: "Invalid Request" }, { status: 400 });
+    }
+}
+
+export async function GET() {
+    try {
+        const { data, error } = await supabase
+            .from('leads')
+            .select('*')
+            .order('created_at', { ascending: false });
+
+        if (error) {
+            return NextResponse.json({ error: error.message }, { status: 500 });
+        }
+
+        return NextResponse.json({ leads: data });
+    } catch (error) {
+        return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
     }
 }
