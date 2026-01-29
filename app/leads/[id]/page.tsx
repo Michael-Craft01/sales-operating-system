@@ -1,9 +1,10 @@
 import { supabase } from "@/lib/supabase";
-import { ArrowLeft, MapPin, Globe, Phone, Mail, Building, Edit2, Sparkles } from "lucide-react";
+import { ArrowLeft, Sparkles } from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { OutreachPanel } from "@/components/Workspace/OutreachPanel";
 import { DocGenerator } from "@/components/Workspace/DocGenerator";
+import { BusinessCard } from "@/components/Workspace/BusinessCard";
 
 export const revalidate = 0; // Disable static caching for live data
 
@@ -51,20 +52,7 @@ export default async function LeadDetailPage({ params }: { params: { id: string 
                 <div className="space-y-6 lg:col-span-1 overflow-y-auto no-scrollbar pb-10">
 
                     {/* Business Card */}
-                    <div className="bg-zinc-900/40 backdrop-blur-xl border border-white/5 rounded-2xl p-6 space-y-4">
-                        <div className="flex justify-between items-center">
-                            <h2 className="text-sm font-bold text-zinc-400 tracking-wider uppercase">Business Info</h2>
-                            <button className="text-xs text-zinc-500 hover:text-white"><Edit2 className="w-3 h-3" /></button>
-                        </div>
-
-                        <div className="space-y-3">
-                            <InfoRow icon={MapPin} value={lead.address} label="Address" />
-                            <InfoRow icon={Globe} value={lead.website} label="Website" isLink />
-                            <InfoRow icon={Phone} value={lead.phone} label="Phone" />
-                            <InfoRow icon={Mail} value={lead.email} label="Email" />
-                            <InfoRow icon={Building} value={lead.industry} label="Industry" />
-                        </div>
-                    </div>
+                    <BusinessCard lead={lead} />
 
                     {/* Google Maps Embed (Manual Limitation: Requires API for real map, using Embed for now) */}
                     <div className="bg-zinc-900/40 backdrop-blur-xl border border-white/5 rounded-2xl overflow-hidden h-64 relative group">
@@ -113,24 +101,4 @@ export default async function LeadDetailPage({ params }: { params: { id: string 
             </div>
         </div>
     );
-}
-
-function InfoRow({ icon: Icon, value, label, isLink }: any) {
-    if (!value) return null;
-
-    return (
-        <div className="flex items-start gap-3 p-2 hover:bg-white/5 rounded-lg transition-colors group">
-            <Icon className="w-4 h-4 text-zinc-500 mt-0.5 group-hover:text-zinc-300" />
-            <div className="flex-1 overflow-hidden">
-                <p className="text-[10px] text-zinc-600 uppercase tracking-wider font-bold">{label}</p>
-                {isLink ? (
-                    <a href={value.startsWith('http') ? value : `https://${value}`} target="_blank" rel="noreferrer" className="text-sm text-zinc-300 hover:text-white hover:underline truncate block">
-                        {value}
-                    </a>
-                ) : (
-                    <p className="text-sm text-zinc-300 truncate">{value}</p>
-                )}
-            </div>
-        </div>
-    )
 }

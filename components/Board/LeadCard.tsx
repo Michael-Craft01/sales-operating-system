@@ -6,6 +6,7 @@ import Link from "next/link";
 import { Lead } from "@/types/lead";
 import { clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
+import { logActivity } from "@/app/actions";
 
 function cn(...inputs: (string | undefined | null | false)[]) {
     return twMerge(clsx(inputs));
@@ -15,6 +16,7 @@ interface LeadCardProps {
     lead: Lead;
     onAction: (action: string, leadId: string) => void;
 }
+
 
 export function LeadCard({ lead, onAction }: LeadCardProps) {
     return (
@@ -71,28 +73,37 @@ export function LeadCard({ lead, onAction }: LeadCardProps) {
             <div className="flex items-center justify-between pt-4 border-t border-white/5">
                 <div className="flex gap-2">
                     {lead.phone && (
-                        <button
-                            onClick={() => onAction('call', lead.id)}
+                        <a
+                            href={`tel:${lead.phone}`}
+                            onClick={() => {
+                                onAction('call', lead.id);
+                                logActivity(lead.id, 'Call', { phone: lead.phone });
+                            }}
                             className="p-2.5 rounded-full bg-white/5 hover:bg-white hover:text-black text-zinc-400 transition-all duration-300"
                             title="Call"
                         >
                             <Phone className="w-4 h-4" />
-                        </button>
+                        </a>
                     )}
                     {lead.email && (
-                        <button
-                            onClick={() => onAction('email', lead.id)}
+                        <a
+                            href={`mailto:${lead.email}`}
+                            onClick={() => {
+                                onAction('email', lead.id);
+                                logActivity(lead.id, 'Email', { email: lead.email });
+                            }}
                             className="p-2.5 rounded-full bg-white/5 hover:bg-white hover:text-black text-zinc-400 transition-all duration-300"
                             title="Email"
                         >
                             <Mail className="w-4 h-4" />
-                        </button>
+                        </a>
                     )}
                     {lead.website && (
                         <a
-                            href={lead.website}
+                            href={lead.website.startsWith('http') ? lead.website : `https://${lead.website}`}
                             target="_blank"
                             rel="noopener noreferrer"
+                            onClick={() => logActivity(lead.id, 'Visit Website', { url: lead.website })}
                             className="p-2.5 rounded-full bg-white/5 hover:bg-white hover:text-black text-zinc-400 transition-all duration-300"
                             title="Visit Website"
                         >
