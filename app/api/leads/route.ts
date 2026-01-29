@@ -1,29 +1,64 @@
 import { NextResponse } from 'next/server';
 import { supabase } from '@/lib/supabase';
+import { z } from 'zod';
+
+// Schema for Validation
+const LeadSchema = z.object({
+    lead: z.object({
+        industry: z.string().optional(),
+        painPoint: z.string().optional(),
+        suggestedMessage: z.string().optional(),
+    }).optional(),
+    business: z.object({
+        name: z.string().min(1, "Business name is required"),
+        address: z.string().optional(),
+        website: z.string().optional(),
+        phone: z.string().optional(),
+        email: z.string().email().optional().or(z.string().length(0)), // Allow empty string or valid email
+        category: z.string().optional(),
+    }).optional(),
+    // Flattened fallback
+    businessName: z.string().optional(),
+    industry: z.string().optional(),
+});
 
 export async function POST(request: Request) {
     try {
         const body = await request.json();
-        console.log("📥 Received Webhook Payload:", JSON.stringify(body, null, 2));
+        console.log("📥 [Ingestion] Received Payload:", JSON.stringify(body, null, 2));
 
-        // Normalize Data (Handling both flattened and nested formats)
-        const rawLead = body.lead || body;
-        const rawBusiness = body.business || body;
+        // 1. Validate Input
+        const parseResult = LeadSchema.safeParse(body);
 
-        const leadId = crypto.randomUUID();
+        if (!parseResult.success) {
+            console.error("❌ [Ingestion] Validation Error:", parseResult.error.format());
+            return NextResponse.json({ error: "Validation Failed", details: parseResult.error.format() }, { status: 400 });
+        }
 
-        const newLead: any = {
-            id: leadId,
-            business_name: rawBusiness.name || rawBusiness.businessName || "Unknown Business",
-            address: rawBusiness.address,
-            website: rawBusiness.website,
-            phone: rawBusiness.phone,
-            email: rawBusiness.email,
+        const { data } = parseResult;
+
+        // 2. Normalize Data
+        // Handle nested 'business' object OR flattened fields
+        const businessName = data.business?.name || data.businessName || body.business_name;
+
+        if (!businessName) {
+            return NextResponse.json({ error: "Missing Business Name" }, { status: 400 });
+        }
+
+        const rawLead = body.lead || {};
+        const rawBusiness = data.business || {};
+
+        const newLead = {
+            business_name: businessName,
+            address: rawBusiness.address || body.address,
+            website: rawBusiness.website || body.website,
+            phone: rawBusiness.phone || body.phone,
+            email: rawBusiness.email || body.email,
 
             // Context
-            industry: rawLead.industry || rawBusiness.category,
-            pain_point: rawLead.painPoint,
-            suggested_message: rawLead.suggestedMessage,
+            industry: data.industry || rawLead.industry || rawBusiness.category || body.industry,
+            pain_point: rawLead.painPoint || body.pain_point,
+            suggested_message: rawLead.suggestedMessage || body.suggested_message,
 
             // Process
             status: 'New',
@@ -34,25 +69,32 @@ export async function POST(request: Request) {
             raw_data: body
         };
 
-        // If Supabase is configured, insert
+        console.log("🛠️ [Ingestion] Processed Lead:", newLead.business_name);
+
+        // 3. Database Insertion
         if (process.env.NEXT_PUBLIC_SUPABASE_URL) {
-            const { error } = await supabase
+            const { data: inserted, error } = await supabase
                 .from('leads')
-                .insert(newLead);
+                .insert(newLead)
+                .select()
+                .single();
 
             if (error) {
-                console.error("Supabase Insert Error:", error);
+                console.error("🔥 [Ingestion] Supabase Error:", error);
                 return NextResponse.json({ error: error.message }, { status: 500 });
             }
+
+            console.log("✅ [Ingestion] Successfully Saved:", inserted.id);
+            return NextResponse.json({ success: true, lead: inserted });
+
         } else {
-            console.log("⚠️ Supabase URL not set. Skipping DB insert.", newLead);
+            console.warn("⚠️ [Ingestion] Supabase not configured. Skipping persistence.");
+            return NextResponse.json({ success: true, lead: newLead, warning: "DB_NOT_CONFIGURED" });
         }
 
-        return NextResponse.json({ success: true, leadId: leadId });
-
-    } catch (error) {
-        console.error("Webhook Error:", error);
-        return NextResponse.json({ error: "Invalid Request" }, { status: 400 });
+    } catch (error: any) {
+        console.error("💥 [Ingestion] Critical Failure:", error);
+        return NextResponse.json({ error: "Internal Server Error", message: error.message }, { status: 500 });
     }
 }
 

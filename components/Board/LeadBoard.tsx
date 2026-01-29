@@ -70,7 +70,7 @@ export function LeadBoard({ initialLeads, onLeadMove }: LeadBoardProps) {
                     return (
                         <div key={stage} className="min-w-[400px] flex flex-col h-full snap-center">
                             {/* Column Header */}
-                            <div className="flex items-center justify-between mb-6 px-4">
+                            <div className="flex items-center justify-between mb-4 px-4 sticky top-0 bg-black/80 backdrop-blur-md z-10 py-4 border-b border-white/5 rounded-t-3xl">
                                 <h2 className="text-xs font-bold text-white tracking-[0.2em] uppercase opacity-70">
                                     {stage.replace(/([A-Z])/g, ' $1').trim()}
                                 </h2>
@@ -85,7 +85,7 @@ export function LeadBoard({ initialLeads, onLeadMove }: LeadBoardProps) {
                                     <div
                                         {...provided.droppableProps}
                                         ref={provided.innerRef}
-                                        className={`flex-1 rounded-3xl p-2 space-y-4 overflow-y-auto no-scrollbar mask-gradient transition-colors duration-300 ${snapshot.isDraggingOver ? "bg-white/5" : "bg-transparent"
+                                        className={`flex-1 rounded-b-3xl p-2 space-y-4 overflow-y-auto custom-scrollbar transition-colors duration-300 ${snapshot.isDraggingOver ? "bg-white/5" : "bg-transparent"
                                             }`}
                                     >
                                         {stageLeads.map((lead, index) => (

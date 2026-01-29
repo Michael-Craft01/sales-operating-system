@@ -2,6 +2,7 @@
 
 import { motion } from "framer-motion";
 import { Phone, Mail, MapPin, ExternalLink, MessageSquare, Clock } from "lucide-react";
+import Link from "next/link";
 import { Lead } from "@/types/lead";
 import { clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
@@ -100,12 +101,12 @@ export function LeadCard({ lead, onAction }: LeadCardProps) {
                     )}
                 </div>
 
-                <button
-                    onClick={() => onAction('view', lead.id)}
-                    className="px-5 py-2.5 rounded-full bg-white text-black text-xs font-bold hover:bg-zinc-200 transition-colors shadow-lg shadow-white/5"
+                <Link
+                    href={`/leads/${lead.id}`}
+                    className="px-5 py-2.5 rounded-full bg-white text-black text-xs font-bold hover:bg-zinc-200 transition-colors shadow-lg shadow-white/5 inline-flex items-center"
                 >
                     View
-                </button>
+                </Link>
             </div>
         </motion.div>
     );
