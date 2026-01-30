@@ -13,26 +13,19 @@ function cn(...inputs: (string | undefined | null | false)[]) {
 const navItems = [
     { name: "Dashboard", href: "/", icon: LayoutDashboard },
     { name: "Leads", href: "/leads", icon: Users },
-    { name: "Scraper", href: "/scraper", icon: Database },
-    { name: "Messages", href: "/messages", icon: MessageSquare },
-    { name: "Settings", href: "/settings", icon: Settings },
 ];
 
 export function Sidebar() {
     const pathname = usePathname();
 
     return (
-        <aside className="w-64 h-screen bg-black/40 backdrop-blur-xl border-r border-white/10 flex flex-col fixed left-0 top-0 z-50">
-            <div className="p-6 border-b border-white/10">
-                <h1 className="text-2xl font-bold tracking-tighter text-white flex items-center gap-2">
-                    <div className="w-6 h-6 bg-white rounded-full flex items-center justify-center">
-                        <div className="w-2 h-2 bg-black rounded-full" />
-                    </div>
-                    SALES<span className="font-light opacity-50">OS</span>
-                </h1>
+        <aside className="w-20 h-screen bg-black border-r border-white/10 flex flex-col items-center py-8 fixed left-0 top-0 z-50 transition-all duration-300">
+            {/* Logo Icon */}
+            <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center mb-12 shadow-[0_0_20px_rgba(255,255,255,0.2)]">
+                <div className="w-3 h-3 bg-black rounded-full" />
             </div>
 
-            <nav className="flex-1 py-6 px-4 space-y-2">
+            <nav className="flex-1 space-y-6 w-full px-2">
                 {navItems.map((item) => {
                     const isActive = pathname === item.href;
                     return (
@@ -40,26 +33,33 @@ export function Sidebar() {
                             key={item.href}
                             href={item.href}
                             className={cn(
-                                "flex items-center gap-3 px-4 py-3 rounded-full transition-all duration-300 group",
+                                "flex flex-col items-center justify-center p-3 rounded-2xl transition-all duration-300 group relative",
                                 isActive
-                                    ? "bg-white text-black font-semibold shadow-[0_0_15px_rgba(255,255,255,0.2)]"
-                                    : "text-zinc-400 hover:text-white hover:bg-white/5"
+                                    ? "bg-white/10 text-white"
+                                    : "text-zinc-500 hover:text-white hover:bg-white/5"
                             )}
+                            title={item.name}
                         >
                             <item.icon
                                 className={cn(
-                                    "w-5 h-5 transition-colors",
-                                    isActive ? "text-black" : "text-zinc-500 group-hover:text-white"
+                                    "w-6 h-6 transition-transform group-hover:scale-110",
+                                    isActive && "text-white"
                                 )}
                             />
-                            <span className="tracking-wide">{item.name}</span>
+                            {isActive && (
+                                <div className="absolute left-0 w-1 h-8 bg-white rounded-r-full" />
+                            )}
                         </Link>
                     );
                 })}
             </nav>
 
-            <div className="p-4 border-t border-white/10 text-[10px] uppercase tracking-widest text-zinc-600 text-center">
-                System Active
+            {/* Vertical Name */}
+            <div className="mt-auto mb-12 flex flex-col items-center justify-center gap-4">
+                <div className="w-px h-24 bg-gradient-to-b from-transparent via-zinc-800 to-transparent" />
+                <h2 className="writing-vertical-rl text-zinc-400 font-serif italic text-lg tracking-widest opacity-60 hover:opacity-100 transition-opacity rotate-180 cursor-default whitespace-nowrap">
+                    Michael Ragu
+                </h2>
             </div>
         </aside>
     );

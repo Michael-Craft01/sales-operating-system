@@ -3,6 +3,7 @@ import { ArrowLeft, Sparkles } from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { StepNavigation } from "@/components/Workspace/StepNavigation";
+import { TerminateLeadButton } from "@/components/TerminateLeadButton";
 
 export default async function LeadLayout(props: {
     children: React.ReactNode;
@@ -39,11 +40,20 @@ export default async function LeadLayout(props: {
                         </div>
                     </div>
                 </div>
-                <div>
+                <div className="flex items-center gap-3">
+                    <Link
+                        href={`/leads/${lead.id}/presentation`}
+                        className="flex items-center gap-2 px-3 py-1.5 bg-zinc-100 hover:bg-white text-black text-xs font-bold rounded-full transition-all"
+                    >
+                        <Sparkles className="w-3 h-3" />
+                        Start Presentation
+                    </Link>
                     <button className="flex items-center gap-2 px-3 py-1.5 bg-zinc-800 hover:bg-zinc-700 text-zinc-200 text-xs font-bold rounded-full border border-white/5 transition-all">
-                        <Sparkles className="w-3 h-3 text-indigo-400" />
+                        <Sparkles className="w-3 h-3 text-zinc-400" />
                         AI Actions
                     </button>
+                    <div className="w-px h-6 bg-zinc-800 mx-1" />
+                    <TerminateLeadButton leadId={lead.id} />
                 </div>
             </header>
 

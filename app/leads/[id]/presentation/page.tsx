@@ -1,24 +1,36 @@
-import { DocGenerator } from "@/components/Workspace/DocGenerator";
 import { supabase } from "@/lib/supabase";
+import { Deck } from "@/components/presentation/Deck";
+import { X } from "lucide-react";
+import Link from "next/link";
 import { notFound } from "next/navigation";
 
-export default async function PresentationPage(props: { params: Promise<{ id: string }> }) {
-    const params = await props.params;
-    const { data: lead } = await supabase.from('leads').select('*').eq('id', params.id).single();
+export const revalidate = 0;
+
+export default async function PresentationPage({ params }: { params: Promise<{ id: string }> }) {
+    const { id } = await params;
+
+    const { data: lead } = await supabase
+        .from('leads')
+        .select('*')
+        .eq('id', id)
+        .single();
+
     if (!lead) return notFound();
 
     return (
-        <div className="w-full space-y-8 p-4">
-            <div className="space-y-2">
-                <h2 className="text-2xl font-bold text-white">04. Presentation Delivery</h2>
-                <p className="text-zinc-400 max-w-2xl">
-                    Generate and send custom proposals, audit reports, or onboarding plans using AI.
-                </p>
-            </div>
+        <div className="fixed inset-0 bg-black z-50 overflow-hidden text-white selection:bg-white selection:text-black">
+            {/* Zen Navigation */}
+            <nav className="absolute top-0 left-0 w-full p-6 flex justify-between items-center z-50 pointer-events-none">
+                <div className="text-sm font-bold tracking-widest uppercase opacity-30">Chocolate OS <span className="mx-2">/</span> Presentation Mode</div>
+                <Link href={`/leads/${id}`} className="pointer-events-auto p-2 rounded-full hover:bg-white/10 transition-colors opacity-50 hover:opacity-100">
+                    <X className="w-6 h-6" />
+                </Link>
+            </nav>
 
-            <div className="w-full">
-                <DocGenerator leadContext={lead} />
-            </div>
+            {/* The Stage */}
+            <main className="w-full h-full flex items-center justify-center">
+                <Deck lead={lead} />
+            </main>
         </div>
     );
 }

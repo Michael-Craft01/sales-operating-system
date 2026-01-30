@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Geist, Geist_Mono, Playfair_Display } from "next/font/google";
 import "./globals.css";
 import { Shell } from "@/components/Layout/Shell";
 import { Providers } from "@/components/Providers";
@@ -14,8 +14,13 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+const playfair = Playfair_Display({
+  variable: "--font-playfair",
+  subsets: ["latin"],
+});
+
 export const metadata: Metadata = {
-  title: "Sales OS | PWA",
+  title: "Chocolate | Sales OS",
   description: "Personal Sales Operating System",
 };
 
@@ -27,7 +32,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased flex bg-background text-foreground min-h-screen`}
+        className={`${geistSans.variable} ${geistMono.variable} ${playfair.variable} antialiased flex bg-background text-foreground min-h-screen`}
       >
         <Providers>
           <Shell>
