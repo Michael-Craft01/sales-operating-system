@@ -1,4 +1,4 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { supabase } from '@/lib/supabase';
 import { z } from 'zod';
 
@@ -88,8 +88,8 @@ export async function POST(request: Request) {
             return NextResponse.json({ success: true, lead: inserted });
 
         } else {
-            console.warn("⚠️ [Ingestion] Supabase not configured. Skipping persistence.");
-            return NextResponse.json({ success: true, lead: newLead, warning: "DB_NOT_CONFIGURED" });
+            console.error("⚠️ [Ingestion] Supabase not configured. Persistence failed.");
+            return NextResponse.json({ error: "Database not configured" }, { status: 500 });
         }
 
     } catch (error: any) {
@@ -98,12 +98,17 @@ export async function POST(request: Request) {
     }
 }
 
-export async function GET() {
+export async function GET(request: NextRequest) {
     try {
+        const searchParams = request.nextUrl.searchParams;
+        const limit = parseInt(searchParams.get('limit') || '50');
+        const offset = parseInt(searchParams.get('offset') || '0');
+
         const { data, error } = await supabase
             .from('leads')
             .select('*')
-            .order('created_at', { ascending: false });
+            .order('created_at', { ascending: false })
+            .range(offset, offset + limit - 1);
 
         if (error) {
             return NextResponse.json({ error: error.message }, { status: 500 });

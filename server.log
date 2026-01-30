@@ -1,0 +1,19 @@
+
+> crm-os@0.1.0 dev
+> next dev
+
+▲ Next.js 16.1.6 (Turbopack)
+- Local:         http://localhost:3000
+- Network:       http://192.168.0.2:3000
+
+✓ Starting...
+✓ Ready in 2.1s
+○ Compiling /leads ...
+ GET /leads 200 in 8.8s (compile: 8.2s, render: 583ms)
+⚠️ Supabase credentials missing. Check .env.local
+ GET /api/leads?limit=100 500 in 506ms (compile: 485ms, render: 21ms)
+[next-auth][warn][NEXTAUTH_URL]
+https://next-auth.js.org/warnings#nextauth_url
+[next-auth][warn][NO_SECRET]
+https://next-auth.js.org/warnings#no_secret
+ GET /api/auth/session 200 in 193ms (compile: 172ms, render: 21ms)

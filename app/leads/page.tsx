@@ -1,7 +1,5 @@
 "use client";
 
-"use client";
-
 import { useEffect, useState } from "react";
 import { LeadBoard } from "@/components/Board/LeadBoard";
 import { Lead, PipelineStage } from "@/types/lead";
@@ -17,7 +15,8 @@ export default function LeadsPage() {
     const fetchLeads = async () => {
         setLoading(true);
         try {
-            const res = await fetch('/api/leads');
+            // Explicitly limit to 100 leads for performance
+            const res = await fetch('/api/leads?limit=100');
             const json = await res.json();
 
             if (json.leads) {
@@ -36,6 +35,8 @@ export default function LeadsPage() {
                     lastActionAt: new Date(l.last_action_at || l.created_at)
                 }));
                 setLeads(mappedLeads);
+            } else {
+                console.error("Failed to load leads:", json.error);
             }
         } catch (err) {
             console.error("Failed to fetch leads", err);
@@ -60,7 +61,7 @@ export default function LeadsPage() {
             <header className="mb-6 flex justify-between items-center shrink-0">
                 <div>
                     <h1 className="text-3xl font-bold text-white tracking-tight">Lead Operations</h1>
-                    <p className="text-zinc-500">Manage your active pipeline.</p>
+                    <p className="text-zinc-500">Manage your active pipeline (showing recent 100).</p>
                 </div>
                 <div className="flex gap-3">
                     <button

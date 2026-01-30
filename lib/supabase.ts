@@ -8,12 +8,25 @@ if (!supabaseUrl || !supabaseKey) {
     console.warn("⚠️ Supabase credentials missing. Check .env.local");
 }
 
+const createMockBuilder = (errorMessage: string) => {
+    const builder: any = {
+        select: () => builder,
+        order: () => builder,
+        limit: () => builder,
+        single: () => builder,
+        insert: () => builder,
+        eq: () => builder,
+        range: () => builder,
+        then: (resolve: any, reject: any) => {
+             return Promise.resolve({ data: null, error: { message: errorMessage } }).then(resolve, reject);
+        }
+    };
+    return builder;
+};
+
 // Create client or return a dummy to prevent crash
 export const supabase = (supabaseUrl && supabaseKey)
     ? createClient(supabaseUrl, supabaseKey)
     : {
-        from: () => ({
-            insert: () => Promise.resolve({ error: { message: "Supabase not configured" } }),
-            select: () => Promise.resolve({ error: { message: "Supabase not configured" } })
-        })
+        from: () => createMockBuilder("Supabase not configured")
     } as any;
