@@ -8,25 +8,65 @@ if (!supabaseUrl || !supabaseKey) {
     console.warn("⚠️ Supabase credentials missing. Check .env.local");
 }
 
-const createMockBuilder = (errorMessage: string) => {
-    const builder: any = {
-        select: () => builder,
-        order: () => builder,
-        limit: () => builder,
-        single: () => builder,
-        insert: () => builder,
-        eq: () => builder,
-        range: () => builder,
-        then: (resolve: any, reject: any) => {
-             return Promise.resolve({ data: null, error: { message: errorMessage } }).then(resolve, reject);
-        }
-    };
-    return builder;
-};
+class MockQueryBuilder {
+    errorMessage: string;
+
+    constructor(errorMessage: string) {
+        this.errorMessage = errorMessage;
+    }
+
+    select(columns?: string, options?: any) {
+        return this;
+    }
+
+    order(column: string, options?: any) {
+        return this;
+    }
+
+    limit(count: number) {
+        return this;
+    }
+
+    single() {
+        return this;
+    }
+
+    insert(row: any) {
+        return this;
+    }
+
+    eq(column: string, value: any) {
+        return this;
+    }
+
+    range(from: number, to: number) {
+        return this;
+    }
+
+    // Thenable interface implementation
+    then(resolve: (value: any) => void, reject: (reason?: any) => void) {
+        // Return a shape that mimics Supabase response
+        const mockResponse = {
+            data: [],
+            count: 0,
+            error: { message: this.errorMessage }
+        };
+        return Promise.resolve(mockResponse).then(resolve, reject);
+    }
+}
 
 // Create client or return a dummy to prevent crash
-export const supabase = (supabaseUrl && supabaseKey)
-    ? createClient(supabaseUrl, supabaseKey)
+const isConfigured = !!supabaseUrl && !!supabaseKey;
+
+if (!isConfigured) {
+    // Only log once to avoid spamming
+    if (typeof window === 'undefined') {
+        console.warn("⚠️ Supabase credentials missing. Check .env.local");
+    }
+}
+
+export const supabase = isConfigured
+    ? createClient(supabaseUrl!, supabaseKey!)
     : {
-        from: () => createMockBuilder("Supabase not configured")
+        from: (table: string) => new MockQueryBuilder("Supabase not configured")
     } as any;
