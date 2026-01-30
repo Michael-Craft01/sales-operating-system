@@ -37,3 +37,33 @@ export async function logActivity(leadId: string, actionType: string, metadata: 
         return { success: false };
     }
 }
+
+export async function updateLeadBANT(leadId: string, bantData: any) {
+    try {
+        // Fetch current raw_data to merge
+        const { data: lead } = await supabase
+            .from('leads')
+            .select('raw_data')
+            .eq('id', leadId)
+            .single();
+
+        const currentRaw = lead?.raw_data || {};
+        const updatedRaw = { ...currentRaw, bant: bantData };
+
+        const { error } = await supabase
+            .from('leads')
+            .update({ raw_data: updatedRaw })
+            .eq('id', leadId);
+
+        if (error) throw error;
+
+        // Log the qualification activity
+        await logActivity(leadId, 'BANT Update', bantData);
+
+        revalidatePath(`/leads/${leadId}/qualification`);
+        return { success: true };
+    } catch (error) {
+        console.error("Failed to update BANT:", error);
+        return { success: false };
+    }
+}

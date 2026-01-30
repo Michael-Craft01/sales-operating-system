@@ -1,10 +1,10 @@
+import 'dotenv/config';
 import { createClient } from '@supabase/supabase-js';
-import { createClient } from '@supabase/supabase-js';
-// Native fetch is available in Node 18+
 
 // CONFIGURATION
-const DISCORD_TOKEN = process.env.DISCORD_TOKEN; // "Bot YOUR_TOKEN"
-const CHANNEL_ID = process.env.DISCORD_CHANNEL_ID;
+const DISCORD_TOKEN = process.env.DISCORD_TOKEN;
+const rawChannelId = process.env.DISCORD_CHANNEL_ID || "";
+const CHANNEL_ID = rawChannelId.replace(/[^0-9]/g, "");
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL!;
 const SUPABASE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY!;
 
@@ -30,40 +30,95 @@ async function importDiscordLeads() {
     }
 
     const messages: any[] = await response.json();
-    console.log(`🔍 Found ${messages.length} messages. Processing...`);
+    console.log(`🔍 Found ${messages.length} messages. Processing Spidey Bot Embeds...`);
 
     let count = 0;
 
     for (const msg of messages) {
-        // Attempt to find JSON in the message content
-        const match = msg.content.match(/```json\n([\s\S]*?)\n```/) || msg.content.match(/{[\s\S]*}/);
+        let data: any = {};
+        let found = false;
 
-        if (match) {
-            try {
-                const jsonStr = match[1] || match[0];
-                const data = JSON.parse(jsonStr);
+        // STRATEGY: Parse Embed Fields (Spidey Bot Format)
+        if (msg.embeds && msg.embeds.length > 0) {
+            const embed = msg.embeds[0];
+            if (embed.fields) {
 
-                // Transform to Lead (Recycling the logic from API)
-                const businessName = data.business?.name || data.businessName || data.business_name;
-                if (!businessName) continue;
+                data.raw_data = embed; // Store entire embed as raw backup
 
-                const newLead = {
-                    business_name: businessName,
-                    address: data.business?.address || data.address,
-                    website: data.business?.website || data.website,
-                    phone: data.business?.phone || data.phone,
-                    email: data.business?.email || data.email,
-                    industry: data.industry || data.business?.category,
-                    stage: 'New',
-                    raw_data: data
-                };
+                for (const field of embed.fields) {
+                    const name = field.name.toLowerCase();
+                    const value = field.value;
 
-                const { error } = await supabase.from('leads').insert(newLead);
-                if (!error) count++;
-                else console.error(`⚠️ Failed to insert ${businessName}:`, error.message);
+                    // Debug: Log what we see to catch mismatches
+                    // console.log(`   ? Field: ${name} = ${value.substring(0, 20)}...`);
 
-            } catch (e) {
-                console.log(`⚠️ Skipping message ${msg.id}: Not valid JSON`);
+                    if (name.includes("business")) {
+                        data.business_name = value.replace(/\*\*/g, "").trim();
+                        found = true;
+                    } else if (name.includes("location") || name.includes("address")) {
+                        data.address = value;
+                    } else if (name.includes("industry")) {
+                        data.industry = value;
+                    } else if (name.includes("pain point")) {
+                        data.pain_point = value;
+                    } else if (name.includes("website")) {
+                        data.website = value;
+                    } else if (name.includes("phone")) {
+                        data.phone = value;
+                    } else if (name.includes("email")) {
+                        data.email = value;
+                    } else if (name.includes("whatsapp")) {
+                        // Extract URL if markdown [Click](url)
+                        const urlMatch = value.match(/\((.*?)\)/);
+                        if (urlMatch) data.website = urlMatch[1];
+                    }
+                }
+
+                // Extract Proposed Message from Second Embed if available
+                if (msg.embeds[1] && msg.embeds[1].description && msg.embeds[1].description.includes("Suggested Attack Plan")) {
+                    const desc = msg.embeds[1].description;
+                    const codeBlockMatch = desc.match(/```([\s\S]*?)```/);
+                    if (codeBlockMatch) {
+                        data.suggested_message = codeBlockMatch[1].trim();
+                    }
+                }
+            }
+        }
+
+        // fallback to old JSON parsing if no embed fields found
+        if (!found && msg.content) {
+            const jsonMatch = msg.content.match(/({[\s\S]*})/);
+            if (jsonMatch) {
+                try {
+                    const parsed = JSON.parse(jsonMatch[1]);
+                    data = { ...data, ...parsed };
+                    data.business_name = parsed.business?.name || parsed.businessName || parsed.business_name;
+                    found = !!data.business_name;
+                } catch (e) { }
+            }
+        }
+
+        if (found && data.business_name) {
+            const newLead = {
+                business_name: data.business_name,
+                address: data.address,
+                website: data.website,
+                phone: data.phone,
+                email: data.email,
+                industry: data.industry,
+                pain_point: data.pain_point,
+                suggested_message: data.suggested_message,
+                stage: 'New',
+                raw_data: msg // Store full message object as backup
+            };
+
+            const { error } = await supabase.from('leads').insert(newLead);
+            if (!error) {
+                count++;
+                console.log(`   + Imported: ${newLead.business_name}`);
+            } else {
+                // CRITICAL: Log the error if it fails
+                console.error(`   - Failed to insert ${newLead.business_name}:`, error.message, error.details);
             }
         }
     }

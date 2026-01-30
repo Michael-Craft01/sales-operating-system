@@ -56,3 +56,18 @@ create table status_history (
 -- Index for history lookups
 create index history_lead_id_idx on status_history (lead_id);
 
+
+-- Appointments Table (Created via Agent)
+create table appointments (
+  id uuid primary key default uuid_generate_v4(),
+  lead_id uuid references leads(id) on delete cascade not null,
+  title text not null,
+  date timestamptz not null,
+  type text not null, -- 'Discovery', 'Demo', 'Contract', 'Onboarding'
+  notes text,
+  status text default 'Scheduled', -- 'Scheduled', 'Completed', 'Cancelled'
+  created_at timestamptz default now()
+);
+
+create index appointments_lead_id_idx on appointments (lead_id);
+create index appointments_date_idx on appointments (date);
