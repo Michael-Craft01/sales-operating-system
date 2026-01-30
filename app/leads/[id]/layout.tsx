@@ -4,6 +4,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { StepNavigation } from "@/components/Workspace/StepNavigation";
 import { TerminateLeadButton } from "@/components/TerminateLeadButton";
+import { AiActionsButton } from "@/components/leads/AiActionsButton";
 
 export default async function LeadLayout(props: {
     children: React.ReactNode;
@@ -48,10 +49,7 @@ export default async function LeadLayout(props: {
                         <Sparkles className="w-3 h-3" />
                         Start Presentation
                     </Link>
-                    <button className="flex items-center gap-2 px-3 py-1.5 bg-zinc-800 hover:bg-zinc-700 text-zinc-200 text-xs font-bold rounded-full border border-white/5 transition-all">
-                        <Sparkles className="w-3 h-3 text-zinc-400" />
-                        AI Actions
-                    </button>
+                    <AiActionsButton lead={lead} />
                     <div className="w-px h-6 bg-zinc-800 mx-1" />
                     <TerminateLeadButton leadId={lead.id} />
                 </div>
@@ -61,7 +59,7 @@ export default async function LeadLayout(props: {
             <StepNavigation leadId={lead.id} />
 
             {/* Content Area */}
-            <main className="flex-1 overflow-hidden relative">
+            <main className="flex-1 overflow-y-auto relative scroll-smooth">
                 {props.children}
             </main>
         </div>

@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Sparkles, Copy, Send, RefreshCw } from "lucide-react";
 import { Lead } from "@/types/lead";
+import { toast } from "sonner";
 
 interface OutreachPanelProps {
     lead: any; // Using any for simplicity with Supabase types for now
@@ -32,18 +33,20 @@ export function OutreachPanel({ lead }: OutreachPanelProps) {
             const data = await res.json();
             if (data.message) {
                 setMessage(data.message);
+                toast.success("Draft Generated", { description: "AI has crafted a new message." });
             } else if (data.error && data.isConfigError) {
-                alert("Please set GEMINI_API_KEY in .env.local to use AI features.");
+                toast.error("Configuration Error", { description: "Please set GEMINI_API_KEY in .env.local" });
             }
         } catch (error) {
             console.error("Failed to generate", error);
+            toast.error("Generation Failed", { description: "Could not connect to AI service." });
         }
         setIsGenerating(false);
     };
 
     const handleCopy = () => {
         navigator.clipboard.writeText(message);
-        // Could add toast here
+        toast.success("Copied to Clipboard");
     };
 
     return (

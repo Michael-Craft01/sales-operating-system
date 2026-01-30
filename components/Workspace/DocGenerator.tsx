@@ -3,7 +3,8 @@
 import { useState } from "react";
 import { FileText, Loader2, Download, Copy, ChevronDown } from "lucide-react";
 import { DocType } from "@/lib/gemini";
-import ReactMarkdown from 'react-markdown'; // Ensure this is installed or handle simple text
+import ReactMarkdown from 'react-markdown';
+import { toast } from "sonner";
 // Note: We'll simple text rendering or simple MD parser if package not present
 // For robustness, I'll use a simple wrapper that assumes plain text marking down or install a package later.
 // Let's assume we render raw text nicely for now.
@@ -39,12 +40,13 @@ export function DocGenerator({ leadContext }: DocGeneratorProps) {
             const data = await res.json();
             if (data.document) {
                 setContent(data.document);
+                toast.success("Document Created", { description: `${docType} generated successfully.` });
             } else {
-                alert("Generation failed: " + (data.error || "Unknown error"));
+                toast.error("Generation Failed", { description: data.error || "Unknown error" });
             }
         } catch (e) {
             console.error(e);
-            alert("Network error");
+            toast.error("Network Error", { description: "Could not reach the server." });
         }
         setLoading(false);
     };
@@ -98,7 +100,10 @@ export function DocGenerator({ leadContext }: DocGeneratorProps) {
             {content && (
                 <div className="mt-4 flex justify-end gap-2">
                     <button
-                        onClick={() => navigator.clipboard.writeText(content)}
+                        onClick={() => {
+                            navigator.clipboard.writeText(content);
+                            toast.success("Copied Markdown");
+                        }}
                         className="text-xs text-zinc-400 hover:text-white flex items-center gap-1 px-3 py-1.5 rounded-lg hover:bg-white/5 transition-colors"
                     >
                         <Copy className="w-3 h-3" /> Copy Markdown

@@ -49,6 +49,12 @@ export function Sidebar() {
                             {isActive && (
                                 <div className="absolute left-0 w-1 h-8 bg-white rounded-r-full" />
                             )}
+
+                            {/* Premium Tooltip */}
+                            <div className="absolute left-full ml-4 px-3 py-1.5 bg-zinc-900 border border-zinc-800 text-white text-xs font-bold rounded-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none z-50">
+                                {item.name}
+                                <div className="absolute right-full top-1/2 -translate-y-1/2 -mr-[1px] border-8 border-transparent border-r-zinc-800" />
+                            </div>
                         </Link>
                     );
                 })}
@@ -57,7 +63,7 @@ export function Sidebar() {
             {/* Vertical Name */}
             <div className="mt-auto mb-12 flex flex-col items-center justify-center gap-4">
                 <div className="w-px h-24 bg-gradient-to-b from-transparent via-zinc-800 to-transparent" />
-                <h2 className="writing-vertical-rl text-zinc-400 font-serif italic text-lg tracking-widest opacity-60 hover:opacity-100 transition-opacity rotate-180 cursor-default whitespace-nowrap">
+                <h2 className="[writing-mode:vertical-rl] text-zinc-400 font-serif italic text-lg tracking-widest opacity-60 hover:opacity-100 transition-opacity rotate-180 cursor-default whitespace-nowrap">
                     Michael Ragu
                 </h2>
             </div>

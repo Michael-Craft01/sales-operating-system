@@ -19,11 +19,19 @@ export default async function OnboardingPage(props: { params: Promise<{ id: stri
 
     return (
         <div className="w-full space-y-8 p-4">
-            <div className="space-y-2">
-                <h2 className="text-2xl font-bold text-white">01. Onboarding & Research</h2>
-                <p className="text-zinc-400 max-w-2xl">
-                    Verify the lead's information and perform initial strategic analysis.
-                </p>
+            <div className="flex items-center justify-between">
+                <div className="space-y-2">
+                    <h2 className="text-2xl font-bold text-white">01. Onboarding & Research</h2>
+                    <p className="text-zinc-400 max-w-2xl">
+                        Verify the lead's information and perform initial strategic analysis.
+                    </p>
+                </div>
+                <div className="bg-gradient-to-br from-zinc-900 to-black border border-white/10 rounded-2xl p-4 min-w-[200px] text-right shadow-[inset_0_1px_0_0_rgba(255,255,255,0.05)]">
+                    <div className="text-[10px] text-zinc-500 uppercase tracking-widest font-bold mb-1">Pipeline Value</div>
+                    <div className="text-2xl font-mono text-white font-bold">
+                        ${(lead.value || 0).toLocaleString()}
+                    </div>
+                </div>
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">

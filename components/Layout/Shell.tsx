@@ -15,8 +15,8 @@ export function Shell({ children }: { children: React.ReactNode }) {
             {/* Main Content */}
             <main
                 className={cn(
-                    "flex-1 overflow-y-auto h-screen w-full transition-all duration-300 p-6",
-                    "ml-64"
+                    "flex-1 overflow-hidden h-screen w-full transition-all duration-300",
+                    "ml-20"
                 )}
             >
                 {children}

@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { supabase } from '@/lib/supabase';
+import { toast } from 'sonner';
 import { X } from 'lucide-react';
 
 export function GoalModal({ isOpen, onClose, onSave }: { isOpen: boolean; onClose: () => void; onSave: () => void }) {
@@ -56,7 +57,7 @@ export function GoalModal({ isOpen, onClose, onSave }: { isOpen: boolean; onClos
                         <div>
                             <label className="block text-xs font-bold text-zinc-500 uppercase mb-1.5">Timeline</label>
                             <select
-                                className="w-full bg-zinc-900 border border-zinc-800 rounded-xl px-3 py-2 text-white text-sm focus:outline-none focus:border-indigo-500"
+                                className="w-full bg-zinc-900 border border-zinc-800 rounded-xl px-3 py-2 text-white text-sm focus:outline-none focus:border-white"
                                 value={formData.type}
                                 onChange={e => setFormData({ ...formData, type: e.target.value })}
                             >
@@ -69,7 +70,7 @@ export function GoalModal({ isOpen, onClose, onSave }: { isOpen: boolean; onClos
                             <input
                                 type="date"
                                 required
-                                className="w-full bg-zinc-900 border border-zinc-800 rounded-xl px-3 py-2 text-white text-sm focus:outline-none focus:border-indigo-500"
+                                className="w-full bg-zinc-900 border border-zinc-800 rounded-xl px-3 py-2 text-white text-sm focus:outline-none focus:border-white"
                                 value={formData.target_date}
                                 onChange={e => setFormData({ ...formData, target_date: e.target.value })}
                             />
@@ -82,7 +83,7 @@ export function GoalModal({ isOpen, onClose, onSave }: { isOpen: boolean; onClos
                             type="text"
                             required
                             placeholder="e.g. Dominate the Q3 Market"
-                            className="w-full bg-zinc-900 border border-zinc-800 rounded-xl px-3 py-2 text-white text-sm focus:outline-none focus:border-indigo-500 placeholder:text-zinc-700"
+                            className="w-full bg-zinc-900 border border-zinc-800 rounded-xl px-3 py-2 text-white text-sm focus:outline-none focus:border-white placeholder:text-zinc-700"
                             value={formData.description}
                             onChange={e => setFormData({ ...formData, description: e.target.value })}
                         />
@@ -116,7 +117,7 @@ export function GoalModal({ isOpen, onClose, onSave }: { isOpen: boolean; onClos
                         <textarea
                             rows={2}
                             placeholder="How are we gonna pull this off?"
-                            className="w-full bg-zinc-900 border border-zinc-800 rounded-xl px-3 py-2 text-white text-sm focus:outline-none focus:border-indigo-500 placeholder:text-zinc-700 resize-none"
+                            className="w-full bg-zinc-900 border border-zinc-800 rounded-xl px-3 py-2 text-white text-sm focus:outline-none focus:border-white placeholder:text-zinc-700 resize-none"
                             value={formData.scope}
                             onChange={e => setFormData({ ...formData, scope: e.target.value })}
                         />

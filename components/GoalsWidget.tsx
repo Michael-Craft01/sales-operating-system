@@ -44,9 +44,9 @@ export function GoalsWidget() {
 
             <div className="space-y-4">
                 {goals.map((goal) => (
-                    <div key={goal.id} className="p-5 rounded-3xl bg-zinc-900/50 border border-zinc-800 relative overflow-hidden group">
+                    <div key={goal.id} className="p-5 rounded-3xl bg-gradient-to-b from-white/10 to-white/5 backdrop-blur-xl border border-white/10 relative overflow-hidden group hover:border-white/20 transition-all shadow-[0_4px_24px_-1px_rgba(0,0,0,0.2)] shadow-[inset_0_1px_0_0_rgba(255,255,255,0.1)]">
                         {/* Background Gradient */}
-                        <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/5 to-purple-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                        <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-zinc-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
 
                         <div className="relative z-10">
                             <div className="flex justify-between items-start mb-2">
@@ -67,7 +67,7 @@ export function GoalsWidget() {
                                 {goal.amount && (
                                     <div className="flex flex-col">
                                         <span className="text-[10px] text-zinc-600 uppercase font-bold">Bag</span>
-                                        <span className="text-emerald-400 font-mono font-bold">${goal.amount.toLocaleString()}</span>
+                                        <span className="text-white font-mono font-bold">${goal.amount.toLocaleString()}</span>
                                     </div>
                                 )}
                                 {goal.target_count && (

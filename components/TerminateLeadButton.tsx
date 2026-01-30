@@ -1,9 +1,11 @@
 'use client';
 
 import { Ban } from 'lucide-react';
+import { toast } from 'sonner';
 import { supabase } from '@/lib/supabase';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
+import { terminateLead } from '@/app/actions/terminate-lead';
 
 export function TerminateLeadButton({ leadId }: { leadId: string }) {
     const router = useRouter();
@@ -14,18 +16,17 @@ export function TerminateLeadButton({ leadId }: { leadId: string }) {
 
         setLoading(true);
         try {
-            const { error } = await supabase
-                .from('leads')
-                .delete()
-                .eq('id', leadId);
+            const res = await terminateLead(leadId);
 
-            if (error) throw error;
+            if (!res.success) throw new Error(res.error);
 
             router.push('/'); // Redirect to dashboard
             router.refresh();
         } catch (e) {
             console.error('Error terminating lead:', e);
-            alert('Failed to terminate lead.');
+            toast.error("Termination Failed", {
+                description: "System could not delete this lead. Check permissions."
+            });
             setLoading(false);
         }
     }
@@ -34,7 +35,7 @@ export function TerminateLeadButton({ leadId }: { leadId: string }) {
         <button
             onClick={handleTerminate}
             disabled={loading}
-            className="p-2 hover:bg-red-500/10 hover:text-red-500 text-zinc-500 rounded-full transition-colors flex items-center justify-center gap-2 group"
+            className="p-2 hover:bg-white hover:text-black text-zinc-500 rounded-full transition-colors flex items-center justify-center gap-2 group"
             title="Terminate Lead"
         >
             <Ban className="w-5 h-5" />

@@ -5,6 +5,7 @@ import { PipelineFunnel } from "@/components/PipelineFunnel";
 import { ActionZone } from "@/components/ActionZone";
 import { RecentLeadsList } from "@/components/RecentLeadsList";
 import { GoalsWidget } from "@/components/GoalsWidget";
+import { NotificationBell } from "@/components/Notifications/NotificationBell";
 
 
 
@@ -46,7 +47,7 @@ export default async function Home() {
     .slice(0, 5);
 
   return (
-    <div className="space-y-8 pb-12">
+    <div className="h-full overflow-y-auto p-6 space-y-8 pb-12">
       <header className="flex justify-between items-end pb-6 border-b border-zinc-900">
         <div>
           <h1 className="text-4xl font-bold text-white tracking-tight font-serif italic">Chocolate</h1>
@@ -61,6 +62,7 @@ export default async function Home() {
           <div>
             <p className="text-xs text-zinc-500 uppercase tracking-widest font-mono">System</p>
             <div className="flex items-center gap-2 justify-end mt-1">
+              <NotificationBell />
               <div className="w-2 h-2 bg-white rounded-full animate-pulse" />
               <span className="text-sm font-medium text-white">Online</span>
             </div>
@@ -139,7 +141,7 @@ export default async function Home() {
 
 function StatsCard({ title, value, subtitle, trend, icon: Icon }: any) {
   return (
-    <div className="p-6 rounded-3xl bg-black border border-zinc-900 hover:border-zinc-700 transition-all duration-300 group">
+    <div className="p-6 rounded-3xl bg-gradient-to-b from-white/10 to-white/5 backdrop-blur-xl border border-white/10 hover:border-white/20 transition-all duration-300 group shadow-[0_4px_24px_-1px_rgba(0,0,0,0.2)] shadow-[inset_0_1px_0_0_rgba(255,255,255,0.1)]">
       <div className="flex justify-between items-start mb-4">
         <div className="p-3 rounded-2xl bg-zinc-900 group-hover:bg-white group-hover:text-black transition-colors text-zinc-500">
           <Icon className="w-5 h-5" />

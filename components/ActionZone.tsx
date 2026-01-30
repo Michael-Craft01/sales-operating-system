@@ -28,7 +28,7 @@ export function ActionZone({ leads }: { leads: any[] }) {
     const lead = leads[currentIndex];
 
     return (
-        <div className="relative overflow-hidden bg-black rounded-3xl border border-zinc-800 p-8 group min-h-[300px] flex flex-col justify-center">
+        <div className="relative overflow-hidden bg-gradient-to-b from-white/10 to-white/5 backdrop-blur-2xl rounded-3xl border border-white/10 p-8 group min-h-[300px] flex flex-col justify-center shadow-[0_8px_32px_-1px_rgba(0,0,0,0.3)] shadow-[inset_0_1px_0_0_rgba(255,255,255,0.1)]">
             {/* Background decoration */}
             <div className="absolute top-0 right-0 p-4 opacity-5 pointer-events-none transition-opacity">
                 <Sparkles className="w-32 h-32 text-white" />
@@ -81,7 +81,7 @@ export function ActionZone({ leads }: { leads: any[] }) {
                     </p>
 
                     <div className="flex flex-wrap gap-3 mt-8">
-                        <Link href={`/leads/${lead.id}`} className="flex items-center gap-2 bg-white text-black px-6 py-3 rounded-full font-bold hover:bg-zinc-200 transition-colors">
+                        <Link href={`/leads/${lead.id}/onboarding`} className="flex items-center gap-2 bg-white text-black px-6 py-3 rounded-full font-bold hover:bg-zinc-200 transition-colors">
                             Open Workspace <ArrowRight className="w-4 h-4" />
                         </Link>
                         {lead.phone && (

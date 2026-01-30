@@ -5,14 +5,17 @@ export async function POST(request: Request) {
     try {
         const { lead } = await request.json();
 
-        if (!lead || !lead.pain_point) {
-            return NextResponse.json({ error: "Lead context (pain_point) required" }, { status: 400 });
+        // Robustness: Allow missing pain_point by using a fallback
+        const SafePainPoint = lead?.pain_point || "General Revenue Growth";
+
+        if (!lead || !lead.business_name) {
+            return NextResponse.json({ error: "Minimal lead context (business_name) required" }, { status: 400 });
         }
 
         const rawAnalysis = await analyzeLeadPotential({
             businessName: lead.business_name,
-            industry: lead.industry,
-            painPoint: lead.pain_point
+            industry: lead.industry || "Unknown",
+            painPoint: SafePainPoint
         });
 
         // Parse JSON if Gemini returns it as a string

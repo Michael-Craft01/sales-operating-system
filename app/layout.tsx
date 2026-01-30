@@ -3,6 +3,7 @@ import { Geist, Geist_Mono, Playfair_Display } from "next/font/google";
 import "./globals.css";
 import { Shell } from "@/components/Layout/Shell";
 import { Providers } from "@/components/Providers";
+import { Toaster } from "@/components/ui/Toaster";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -37,6 +38,7 @@ export default function RootLayout({
         <Providers>
           <Shell>
             {children}
+            <Toaster />
           </Shell>
         </Providers>
       </body>
