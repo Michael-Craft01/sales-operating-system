@@ -21,8 +21,32 @@ const playfair = Playfair_Display({
 });
 
 export const metadata: Metadata = {
-  title: "Chocolate | Sales OS",
-  description: "Personal Sales Operating System",
+  title: "CHOC | Sales OS",
+  description: "Personal Sales Operating System - Close more deals with CHOC",
+  icons: {
+    icon: "/favicon.png",
+    shortcut: "/favicon.png",
+    apple: "/favicon.png",
+  },
+  openGraph: {
+    title: "CHOC | Sales OS",
+    description: "Personal Sales Operating System - Close more deals with CHOC",
+    images: [
+      {
+        url: "/og-image.png",
+        width: 1200,
+        height: 630,
+        alt: "CHOC Sales OS",
+      },
+    ],
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "CHOC | Sales OS",
+    description: "Personal Sales Operating System - Close more deals with CHOC",
+    images: ["/og-image.png"],
+  },
 };
 
 export default function RootLayout({

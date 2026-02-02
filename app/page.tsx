@@ -6,6 +6,7 @@ import { ActionZone } from "@/components/ActionZone";
 import { RecentLeadsList } from "@/components/RecentLeadsList";
 import { GoalsWidget } from "@/components/GoalsWidget";
 import { NotificationBell } from "@/components/Notifications/NotificationBell";
+import { EngagementManager } from "@/components/EngagementManager";
 
 
 
@@ -63,6 +64,7 @@ export default async function Home() {
             <p className="text-xs text-zinc-500 uppercase tracking-widest font-mono">System</p>
             <div className="flex items-center gap-2 justify-end mt-1">
               <NotificationBell />
+              <EngagementManager />
               <div className="w-2 h-2 bg-white rounded-full animate-pulse" />
               <span className="text-sm font-medium text-white">Online</span>
             </div>
@@ -105,10 +107,6 @@ export default async function Home() {
 
           {/* Recent Activity */}
           <div>
-            <div className="flex items-center gap-2 mb-4">
-              <Clock className="w-4 h-4 text-zinc-500" />
-              <h2 className="text-lg font-semibold text-white">Recent Signals</h2>
-            </div>
             <RecentLeadsList leads={leads || []} />
           </div>
         </div>

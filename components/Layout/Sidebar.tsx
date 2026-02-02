@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import { LayoutDashboard, Users, Settings, Database, MessageSquare } from "lucide-react";
 import { clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
+import { PushNotificationManager } from "@/components/Notifications/PushNotificationManager";
 
 function cn(...inputs: (string | undefined | null | false)[]) {
     return twMerge(clsx(inputs));
@@ -59,6 +60,11 @@ export function Sidebar() {
                     );
                 })}
             </nav>
+
+            {/* Push Notification Toggle */}
+            <div className="mb-4">
+                <PushNotificationManager />
+            </div>
 
             {/* Vertical Name */}
             <div className="mt-auto mb-12 flex flex-col items-center justify-center gap-4">

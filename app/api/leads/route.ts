@@ -85,6 +85,25 @@ export async function POST(request: Request) {
             }
 
             console.log("✅ [Ingestion] Successfully Saved:", inserted.id);
+
+            // Trigger push notification for new lead
+            try {
+                const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
+                await fetch(`${baseUrl}/api/push/send`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        title: '🆕 New Lead',
+                        body: `${inserted.business_name} - ${inserted.industry || 'Unknown Industry'}`,
+                        url: `/leads/${inserted.id}`,
+                    }),
+                });
+                console.log("📲 [Ingestion] Push notification sent");
+            } catch (pushError) {
+                console.warn("⚠️ [Ingestion] Push notification failed:", pushError);
+                // Don't fail the request if push fails
+            }
+
             return NextResponse.json({ success: true, lead: inserted });
 
         } else {

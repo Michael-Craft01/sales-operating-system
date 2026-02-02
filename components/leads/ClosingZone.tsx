@@ -9,6 +9,7 @@ import { Trophy, XCircle, ArrowRight, Loader2 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { terminateLead } from '@/app/actions/terminate-lead';
 import { createNotification } from '@/app/actions/notifications';
+import { checkGoalProgress } from '@/app/actions/engagement';
 
 export function ClosingZone({ leadId }: { leadId: string }) {
     const router = useRouter();
@@ -44,13 +45,25 @@ export function ClosingZone({ leadId }: { leadId: string }) {
 
             if (error) throw error;
 
-            // Create Victory Notification
-            await createNotification({
-                type: 'success',
-                title: 'Mission Accomplished',
-                message: 'Deal secured. Revenue has been recorded.',
-                link: `/leads/${leadId}/presentation` // Or somewhere relevant
-            });
+            // Trigger Goal Check
+            const progress = await checkGoalProgress();
+
+            if (progress && progress.isClose) {
+                await createNotification({
+                    type: 'info',
+                    title: 'Finish Line in Sight',
+                    message: `You are at ${Math.round(progress.progress * 100)}% of your goal. Only $${(progress.targetAmount - progress.currentAmount).toLocaleString()} to go!`,
+                    link: '#'
+                });
+            } else {
+                // Standard Victory Notification
+                await createNotification({
+                    type: 'success',
+                    title: 'Mission Accomplished',
+                    message: 'Deal secured. Revenue has been recorded.',
+                    link: `/leads/${leadId}/presentation`
+                });
+            }
 
             toast.success("Deal Closed!", {
                 description: "Congratulations. Revenue secured."
